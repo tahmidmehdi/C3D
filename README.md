@@ -78,7 +78,7 @@ The results file is named results_< timestamp >.txt and the results are formatte
 	q_Value	Adjusted p-value after performing multiple test correction
 
 Arc diagrams can be viewed in a file called figures_< timestamp >.pdf (if figures=y is in config file).
-Tracks can be found in a file called < anchor ID >.tracks.txt, < anchor ID >.anchor.bedGraph and < anchor ID >.bedGraph for each anchor (if tracks=y is in config file).
+Tracks can be found in files called < anchor ID >.tracks.txt, < anchor ID >.anchor.bedGraph and < anchor ID >.bedGraph for each anchor (if tracks=y is in config file).
 
 TUTORIAL (CASE EXAMPLES)
 
