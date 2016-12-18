@@ -1,0 +1,143 @@
+#!/bin/bash
+
+# Copyright 2016 Mathieu Lupien
+
+# This file is part of C3D.
+
+# C3D is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# C3D is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with C3D.  If not, see <http://www.gnu.org/licenses/>.
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Cross Cell-type Correlation in DNaseI hypersensitivity (C3D)
+# Written by: Tahmid Mehdi
+# Princess Margaret Cancer Centre - University Health Network, December 18, 2016
+
+# Cross Cell-type Correlation in DNaseI hypersensitivity (C3D)
+# Takes correlations between open regions of chromatin based on DNaseI hypersensitivity signals
+# Regions with high correlations are candidates for 3D interactions
+# Performs association tests on each candidate & adjusts p-values
+# Produces interaction landscapes and tracks in PDF format
+
+# Help text
+if [ "$1" = "-help" ]; then
+	printf "Usage: sh c3d <config file>"
+	printf "\nSee template.cfg for an example of a config file"
+	printf "\nParameters for config file"
+        printf "\nreference (Optional if matrix provided)\n\tReference sample BED/BEDGRAPH"
+        printf "\nanchor (Required)\n\tFile with anchor regions BED (chr,start,stop,gene)"
+        printf "\ndb (Optional if matrix provided)\n\tFile containing list of background files BEDGRAPH"
+        printf "\noutDirectory (Required)\n\tOutput directory"
+        printf "\nmatrix (Optional if reference and db provided)\n\tSignal data with regions as rows & samples as columns. It must have row names in chr:start-end format. If not provided,
+ a matrix will be generated using reference & db"
+        printf "\nwindow (Optional)\n\tNumber of flanking bps from anchor to check for open regions. If set to genome, it will take the correlation between each anchor DHS & every DHS in the reference. Defaults to 500000"
+        printf "\ncorrelationThreshold (Optional)\n\tCorrelation threshold. Only interaction candidates with correlations above or equal to this will be shown. Defaults to 0.7"
+        printf "\npValueThreshold (Optional)\n\tP-value threshold. Only interaction candidates with p-values below or equal to this will be shown. Defaults to 0.05"
+        printf "\nqValueThreshold (Optional)\n\tQ-value threshold. Only interaction candidates with q-values below or equal to this will be shown. Defaults to 0.1"
+        printf "\ncorrelationMethod (Optional)\n\tCorrelation coefficient (pearson, spearman, kendall). Defaults to pearson"
+	printf "\nfigures (Optional)\n\ty if figures should be generated. Leave this parameter out if you do not want figures"
+	printf "\nfigureWidth (Optional)\n\tNumber of flanking bps from anchor to display on figures. Use a comma-separated list to assign different widths to different figures. For example, if you have 3 figures and 500000,100000,400 is passed then the figures will show 500000, 100000, and 400 bps around the first, second, and third anchors respectively. Defaults to window"
+	printf "\nzoom (Optional)\n\tNumber of flanking bps from anchor to show for zoomed figures. You can also pass a comma-separated list of numbers if you want different zoom regions for each figure. For example, if you have 3 figures and you pass 10000,50000,75000 then the zoom regions for figures 1,2, and 3 will be 10000,50000, and 75000 respectively. Use 0 if you do not wish to zoom. Defaults to no zoom"
+	printf "\ncolours (Optional)\n\t4 colours for the interaction plots. For example, if blue,red,green,purple is passed then arcs of interactions with q-values>0.05 will be blue, between 0.05 and 0.01 will be red, 0.01 and 0.001 will be green and below 0.001 will be purple. Hexadecimal digits accepted. Defaults to shades of blue"
+	printf "\ntracks (Optional)\n\ty if a file with tracks should be generated. This file can be uploaded to the UCSC Genome Browser to view interaction candidates. It creates the file by default. Change this parameter to anything but y if you do not want the file"
+	printf "\nassembly (Optional)\n\treference genome of the reference and db files. Defaults to hg19"
+	printf "\nMulti-sample Parameters:"
+	printf "\nDo not include reference or matrix if you want to run C3D on multiple samples"
+	printf "\nreferences (Optional if matrices provided)\n\tA file containing a list of reference sample BED/BEDGRAPHs where each line is of the form '<reference.bed> <sample name>'. Each sample will be processed on a different node"
+	printf "\nmatrices (Optional if references and db provided)\n\tA file containing a list of reference sample matrices where each line is of the form '<signalMatrix.txt> <sample name>'. Each sample will be processed on a different node"
+	printf "\nAll other parameters are available\n"
+	exit 1
+fi 
+
+# an array for parameters
+declare -A config
+# default values
+config=(
+    	[reference]=""
+    	[db]=""
+    	[anchor]=""
+	[outDirectory]=""
+	[matrix]=""
+	[references]=""
+	[matrices]=""
+	[tracks]=“n”
+	[assembly]="hg19"
+)
+# read parameters from config file
+while read line
+do
+	if echo $line | grep -F = &>/dev/null
+    	then
+		eval expanded_line="$line"
+        	varname=$(echo "$line" | cut -d '=' -f 1)
+        	config[$varname]=$(echo $expanded_line | cut -d '=' -f 2-)
+    	fi
+	if echo $line | grep -F 'module load' &>/dev/null
+    	then
+    		eval $line
+	fi
+done < $1
+# if assembly is empty, assign hg19
+if [ -z "${config[assembly]}" ]; then
+        config[assembly]="hg19"
+fi
+# if anchor or outDirectory are missing, warn user and stop script
+if [ -z "${config[anchor]}" ] || [ -z "${config[outDirectory]}" ]; then
+	echo "Missing anchor or outDirectory. Check config file"
+	exit 1
+fi
+# if matrices is included
+if [ "${config[matrices]}" != "" ]; then
+	# arrays of files and sample names, respectively
+        files=( $(cut -d ' ' -f1 ${config[matrices]} ) )
+	sample=( $(cut -d ' ' -f2 ${config[matrices]} ) )
+	# run C3D on a different node for each sample
+        for i in "${!files[@]}"; do
+                $DIR/c3d.sh "$1" -matrix "${files[$i]}" -out "${config[outDirectory]}/${sample[$i]}" -sample "${sample[$i]}" -track "$((i + 1))" -numSamples "${#files[@]}" 
+        done
+	if [ "${config[tracks]}" = "y" ]; then
+		# make a custom track that combines samples & adds motif occurances
+        	$DIR/makeTracks.sh "${config[outDirectory]}/anchors.bed" "${config[outDirectory]}" "${config[matrices]}" "${config[assembly]}"
+	fi
+# if references is included
+elif [ "${config[references]}" != "" ]; then
+	# if no db passed, stop script & warn user
+        if [ -z "${config[db]}" ]; then
+                echo "Missing db. Check config file. Add db or matrices"
+                exit 1
+	else
+		files=( $(cut -d$'\t' -f1 ${config[references]} ) )
+	        sample=( $(cut -d$'\t' -f2 ${config[references]} ) )
+
+        	for i in "${!files[@]}"; do
+                	$DIR/c3d.sh "$1" -ref "${files[$i]}" -out "${config[outDirectory]}/${sample[$i]}" -sample "${sample[$i]}" -track "$((i + 1))" -numSamples "${#files[@]}" 
+		done
+        	if [ "${config[tracks]}" = "y" ]; then
+                	$DIR/makeTracks.sh "${config[outDirectory]}/anchors.bed" "${config[outDirectory]}" "${config[references]}" "${config[assembly]}"
+        	fi
+	fi
+else
+	# if matrix is missing and reference and db are not supplied, warn user and stop script
+	if [ -z "${config[matrix]}" ]; then
+        	if [ -z "${config[reference]}" ] || [ -z "${config[db]}" ]; then
+                	echo "Missing reference or db. Check config file. Add reference and db or matrix"
+                	exit 1
+        	fi
+	fi
+	# run C3D without overwrite parameters because there's only 1 sample
+	$DIR/c3d.sh "$1" 
+
+	if [ "${config[tracks]}" = "y" ]; then
+                $DIR/makeTracks.sh "${config[outDirectory]}/anchors.bed" "${config[outDirectory]}" "${config[references]}" "${config[assembly]}"
+        fi
+fi

@@ -1,0 +1,10 @@
+anchor=</path/to/>test_anchors.bed
+outDirectory=</path/to/output>
+matrix=</path/to/>signalMatrix.txt
+window=500000
+correlationThreshold=0.7
+correlationMethod=pearson
+figures=y
+figureWidth=500000
+zoom=100000
+tracks=y
