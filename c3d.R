@@ -370,7 +370,7 @@ if (figures=="y" && length(regionIndices.Coord1)>0) {
                             rownumber=anchor.df$row, type="region", color=anchor.df$color,row="given",
                             rowlabels=c("Anchors"), rowlabelcol="black", rowlabelcex=1.25)
     }
-    mtext(paste("Figure ",r,": Interaction Landscape of", ids[r], sep=""), side=1)
+    mtext(paste("Figure ",r,": Interaction Landscape of ", ids[r], sep=""), side=1)
     cat('\rGenerating Figures: Created figure', r, 'of', length(anchor.bed))
   }
   cat("\n")
