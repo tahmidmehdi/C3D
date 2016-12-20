@@ -49,7 +49,7 @@ Parameters for config file
 
 	colours (Optional): 4 colours for the loops in the arc diagrams. Loops are colour-coded based on q-values. For example, if blue,red,green,purple is passed then loops of interactions with q-values>0.05 will be blue, between 0.05 and 0.01 will be red, between 0.01 and 0.001 will be green and below 0.001 will be purple. Hexadecimal digits accepted. Defaults to shades of blue.
 
-	tracks (Optional): y if a file with tracks should be generated. This file can be uploaded to the UCSC Genome Browser to view interaction candidates. Leave this parameter out if you do not want figures or have many anchors.
+	tracks (Optional): y if files with tracks should be generated. These files can be uploaded to the UCSC Genome Browser or the Integrative Genomics Viewer (IGV) to view interaction candidates. Leave this parameter out if you do not want figures or have many anchors.
 
 	assembly (Optional): Reference genome for tracks. Defaults to hg19.
 Multi-sample Parameters
@@ -145,4 +145,4 @@ Configure and run C3D
     
         sh c3d config.txt
 
-C3D will output the results to results_< timestamp >.txt. Arc diagrams for each anchor can be found in figures_< timestamp >.pdf. Tracks will be generated in files ending in .tracks.txt and .bedGraph. Files ending with .tracks.txt can be uploaded to the UCSC Genome Browser (https://genome.ucsc.edu/cgi-bin/hgGateway) to visualize the correlations. Alternatively, tracks ending in .bedGraph can be uploaded to the Integrative Genomics Viewer (IGV). Instructions for downloading and using IGV can be found at https://software.broadinstitute.org/software/igv/download. All of these files will be located in the specified outDirectory.
+C3D will output the results to results_< timestamp >.txt. Arc diagrams for each anchor can be found in figures_< timestamp >.pdf. Tracks will be generated in files ending in .tracks.txt and .bedGraph. Files ending with .tracks.txt can be uploaded to the UCSC Genome Browser (https://genome.ucsc.edu/cgi-bin/hgGateway) to visualize the correlations. Alternatively, tracks ending in .bedGraph can be uploaded to IGV. Instructions for downloading and using IGV can be found at https://software.broadinstitute.org/software/igv/download. All of these files will be located in the specified outDirectory.
