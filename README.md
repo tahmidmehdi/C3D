@@ -59,7 +59,7 @@ If you want to run C3D on multiple samples, do not include reference or matrix. 
 
 All other parameters are still available.
 
-## OUTPUT
+## Output
 
 The results file is named `results_<timestamp>.txt` and the results are formatted as a table with the following columns:
 
