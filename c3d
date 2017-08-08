@@ -56,7 +56,7 @@ if [ "$1" = "-help" ]; then
     printf "\nmatrices (Optional if references and db provided)\n\tA file containing a list of reference sample matrices where each line is of the form '<signalMatrix.txt> <sample name>'. Each sample will be processed on a different node"
     printf "\nAll other parameters are available\n"
     exit 1
-fi 
+fi
 
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
@@ -162,7 +162,7 @@ else
         fi
     fi
     # run C3D without overwrite parameters because there's only 1 sample
-    $DIR/c3d.sh "$1" 
+    $DIR/c3d.sh "$1"
 
     if [ "${config[tracks]}" = "y" ]; then
         $DIR/makeTracks.sh \

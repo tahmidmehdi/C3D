@@ -160,7 +160,7 @@ fi
 # filter the anchor file for anchors within the reference catalogue
 intersectBed -wa -a ${config[outDirectory]}/anchors_temp.bed -b ${config[outDirectory]}/ref.bed | sort -u -k1,1 -k2,2n > ${config[outDirectory]}/anchors.bed
 config[anchor]="${config[outDirectory]}/anchors.bed"
-rm ${config[outDirectory]}/anchors_temp.bed 
+rm ${config[outDirectory]}/anchors_temp.bed
 # Run R script
 Rscript $DIR/c3d.R \
     ${config[outDirectory]} \

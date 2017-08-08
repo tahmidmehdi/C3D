@@ -18,7 +18,7 @@
 # along with C3D.  If not, see <http://www.gnu.org/licenses/>.
 
 # Cross Cell-type Correlation in DNaseI hypersensitivity (C3D)
-# Written by: Tahmid Mehdi 
+# Written by: Tahmid Mehdi
 # Princess Margaret Cancer Centre - University Health Network, December 18, 2016
 # Tested on R 3.3.1
 
@@ -31,7 +31,7 @@ args <- commandArgs(trailingOnly = TRUE)
 refMapDir <- args[1] # directory of mapped files
 outDir <- sub('/$', '', args[2]) # output directory
 anchor <- args[3] # anchor file (bed)
-bg <- args[4] # file with list of bg files 
+bg <- args[4] # file with list of bg files
 window <- args[5] # flanking bps from anchor to search for open regions
 rcut <- as.numeric(args[6]) # correlation threshold
 pcut <- as.numeric(args[7]) # p-value threshold
@@ -172,7 +172,7 @@ if (signalMatrixFile == "") {
     signals <- do.call(
         cbind,
         lapply(
-            refMapFiles, 
+            refMapFiles,
             function(f) read.table(f, header = FALSE, sep = "\t")[, 4]
         )
     )
@@ -214,7 +214,7 @@ dendro <- hclust(crossGenomeCors) # hierarchically cluster the samples
 clusters <- as.character(cutreeDynamic(
     dendro,
     minClusterSize = 1,
-    verbose = 0, 
+    verbose = 0,
     distM = as.matrix(crossGenomeCors),
     deepSplit = 4
 ))
@@ -222,7 +222,7 @@ clusters <- as.character(cutreeDynamic(
 avg.norm.signals <- do.call(
     cbind,
     lapply(
-        unique(clusters), 
+        unique(clusters),
         function(p) rowAvg(signals.norm[, which(clusters == p)])
     )
 )
@@ -305,9 +305,9 @@ for (r in 1:length(anchor.bed)) { # iterate through promoters
         rep(candidateRegions, length(regionsInPromoters))
     )
     corStats <- apply(regionIndices, 1, function(x) getCor(x[1], x[2], signals))
-    # record regionNames of anchor DHSs 
+    # record regionNames of anchor DHSs
     COORD_1 <- regionNames[regionIndices[, 1]]
-    # record regionNames of distal DHSs 
+    # record regionNames of distal DHSs
     COORD_2 <- regionNames[regionIndices[, 2]]
     # record correlations, p-values & q-values
     Correlation <- corStats[1, ]
@@ -378,7 +378,7 @@ if (figures == "y" && length(regionIndices.Coord1) > 0) {
     start <- start(ranges(anchor.bed))
     end <- end(ranges(anchor.bed))
     name <- sapply(strsplit(ids, "_"), function(x) head(x, n = 1))
-    strand <- sapply(anchorStrands, function(x) strand_to_num(x)) 
+    strand <- sapply(anchorStrands, function(x) strand_to_num(x))
     score <- rep(".", length(name))
     p_Value <- q_Value <- rep(0, length(name))
 
@@ -397,7 +397,7 @@ if (figures == "y" && length(regionIndices.Coord1) > 0) {
 
     # extract colours for interactions
     colour <- commaSepStr_to_vector(colour, 4)
-    # make interaction data frame 
+    # make interaction data frame
     chrom1 <- as.character(seqnames(ref.bed[regionIndices.Coord1]))
     start1 <- start(ranges(ref.bed[regionIndices.Coord1]))
     end1 <- end(ranges(ref.bed[regionIndices.Coord1]))
@@ -451,14 +451,14 @@ if (figures == "y" && length(regionIndices.Coord1) > 0) {
         options(warn = defaultWarn)
         if (r %in% noZoom) { # figure with no zoom
             layout(matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,2,2), 7, 2, byrow = TRUE))
-            par(mar = c(4,6,1,8), oma = rep(0.75,4), xpd = TRUE) 
+            par(mar = c(4,6,1,8), oma = rep(0.75,4), xpd = TRUE)
             # landscape plot
             intLandscape = plotBedpe(
                 interactions.bedpe,
                 chrom,
                 chromstart,
-                chromend, 
-                heights = interactions.bedpe$score, 
+                chromend,
+                heights = interactions.bedpe$score,
                 lwdby = 0.5 * dnorm(
                     interactions.bedpe$q_Value,
                     mean = 0,
@@ -474,7 +474,7 @@ if (figures == "y" && length(regionIndices.Coord1) > 0) {
                 chromstart,
                 chromend,
                 n = 5,
-                scale = "bp", 
+                scale = "bp",
                 chromline = 0.25,
                 scaleline = 0.25
             )
@@ -502,7 +502,7 @@ if (figures == "y" && length(regionIndices.Coord1) > 0) {
                 font = 2
             )
             # tracks for anchors
-            par(mar = c(1, 6, 1, 8)) 
+            par(mar = c(1, 6, 1, 8))
             anchorTrack = plotBed(
                 beddata = anchor.df,
                 chrom = chrom,
@@ -541,7 +541,7 @@ if (figures == "y" && length(regionIndices.Coord1) > 0) {
                 chromstart,
                 chromend,
                 n = 5,
-                scale = "bp", 
+                scale = "bp",
                 chromline = 0.25,
                 scaleline = 0.25
             )
@@ -554,7 +554,7 @@ if (figures == "y" && length(regionIndices.Coord1) > 0) {
                     expression("" <= "0.05"),
                     expression("" <= "0.01"),
                     expression("" <= "0.001")
-                ), 
+                ),
                 col = colour,
                 lty = 1,
                 lwd = 2.5,
@@ -569,7 +569,7 @@ if (figures == "y" && length(regionIndices.Coord1) > 0) {
                 font = 2
             )
             # zoomed region
-            par(mar = c(1, 6, 1, 8)) 
+            par(mar = c(1, 6, 1, 8))
             regionZoom <- c(
                 start(ranges(anchor.bed[r])) - zoom[r],
                 end(ranges(anchor.bed[r])) + zoom[r]
@@ -611,7 +611,7 @@ if (figures == "y" && length(regionIndices.Coord1) > 0) {
                 chromstart = regionZoom[1],
                 chromend = regionZoom[2],
                 n = 5,
-                scale = "bp", 
+                scale = "bp",
                 chromline = 0.25,
                 scaleline = 0.25
             )
@@ -623,7 +623,7 @@ if (figures == "y" && length(regionIndices.Coord1) > 0) {
                 font = 2
             )
             # tracks for anchors
-            par(mar = c(1, 6, 1, 8)) 
+            par(mar = c(1, 6, 1, 8))
             anchorTrack = plotBed(
                 beddata = anchor.df,
                 chrom = chrom,
