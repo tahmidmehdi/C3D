@@ -147,7 +147,7 @@ rowAvg <- function(A) {
 }
 
 # if signalMatrixFile not provided, generate matrix from mapped files
-if (signalMatrixFile=="") {
+if (signalMatrixFile == "") {
     # list of files in refMapDir ending in .map.bed
     refMapDir <-  sub('/$', '', refMapDir)
     refMapFiles <- list.files(
@@ -180,15 +180,15 @@ if (signalMatrixFile=="") {
     write.table(
         signals,
         paste(outDir, "signalMatrix.txt", sep="/"),
-        row.names = T,
-        col.names = F,
-        quote = F
+        row.names = TRUE,
+        col.names = FALSE,
+        quote = FALSE
     ) # write matrix to file
 } else { # if signalMatrixFile provided, use that as the matrix
     # load matrix
     signals <- as.matrix(read.table(
         signalMatrixFile,
-        header=FALSE,
+        header = FALSE,
         row.names = 1
     ))
     regionNames <- rownames(signals)
