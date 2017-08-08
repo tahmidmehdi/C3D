@@ -179,7 +179,7 @@ if (signalMatrixFile == "") {
     rownames(signals) <- regionNames
     write.table(
         signals,
-        paste(outDir, "signalMatrix.txt", sep="/"),
+        paste(outDir, "signalMatrix.txt", sep = "/"),
         row.names = TRUE,
         col.names = FALSE,
         quote = FALSE

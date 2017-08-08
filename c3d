@@ -91,7 +91,7 @@ done < $1
 
 # if assembly is empty, assign hg19
 if [ -z "${config[assembly]}" ]; then
-        config[assembly]="hg19"
+    config[assembly]="hg19"
 fi
 # if anchor is missing, warn user and stop script
 if [ -z "${config[anchor]}" ]; then
@@ -110,11 +110,21 @@ if [ "${config[matrices]}" != "" ]; then
     sample=( $(cut -d ' ' -f2 ${config[matrices]} ) )
     # run C3D on a different node for each sample
     for i in "${!files[@]}"; do
-            $DIR/c3d.sh "$1" -matrix "${files[$i]}" -out "${config[outDirectory]}/${sample[$i]}" -sample "${sample[$i]}" -track "$((i + 1))" -numSamples "${#files[@]}" 
+        $DIR/c3d.sh \
+            $1 \
+            -matrix "${files[$i]}" \
+            -out "${config[outDirectory]}/${sample[$i]}" \
+            -sample "${sample[$i]}" \
+            -track "$((i + 1))" \
+            -numSamples "${#files[@]}"
     done
     if [ "${config[tracks]}" = "y" ]; then
         # make a custom track that combines samples & adds motif occurances
-        $DIR/makeTracks.sh "${config[outDirectory]}/anchors.bed" "${config[outDirectory]}" "${config[matrices]}" "${config[assembly]}"
+        $DIR/makeTracks.sh \
+            "${config[outDirectory]}/anchors.bed" \
+            "${config[outDirectory]}" \
+            "${config[matrices]}" \
+            "${config[assembly]}"
     fi
 # if references is included
 elif [ "${config[references]}" != "" ]; then
@@ -127,10 +137,20 @@ elif [ "${config[references]}" != "" ]; then
         sample=( $(cut -d$'\t' -f2 ${config[references]} ) )
 
         for i in "${!files[@]}"; do
-                $DIR/c3d.sh "$1" -ref "${files[$i]}" -out "${config[outDirectory]}/${sample[$i]}" -sample "${sample[$i]}" -track "$((i + 1))" -numSamples "${#files[@]}" 
+            $DIR/c3d.sh \
+            "$1" \
+            -ref "${files[$i]}" \
+            -out "${config[outDirectory]}/${sample[$i]}" \
+            -sample "${sample[$i]}" \
+            -track "$((i + 1))" \
+            -numSamples "${#files[@]}"
         done
         if [ "${config[tracks]}" = "y" ]; then
-                $DIR/makeTracks.sh "${config[outDirectory]}/anchors.bed" "${config[outDirectory]}" "${config[references]}" "${config[assembly]}"
+            $DIR/makeTracks.sh \
+                "${config[outDirectory]}/anchors.bed" \
+                "${config[outDirectory]}" \
+                "${config[references]}" \
+                "${config[assembly]}"
         fi
     fi
 else
@@ -145,6 +165,10 @@ else
     $DIR/c3d.sh "$1" 
 
     if [ "${config[tracks]}" = "y" ]; then
-        $DIR/makeTracks.sh "${config[outDirectory]}/anchors.bed" "${config[outDirectory]}" "${config[references]}" "${config[assembly]}"
+        $DIR/makeTracks.sh \
+        "${config[outDirectory]}/anchors.bed" \
+        ${config[outDirectory]} \
+        ${config[references]} \
+        ${config[assembly]}
     fi
 fi
