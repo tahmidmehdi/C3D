@@ -54,14 +54,14 @@ config=(
 # read parameters from config file
 while read line
 do
-    if echo $line | grep -F = &>/dev/null
-    then
-    eval expanded_line="$line"
+    # if "=" in the line, assign the config parameter
+    if [[ $line == *"="* ]]; then
+        eval expanded_line="$line"
         varname=$(echo "$line" | cut -d '=' -f 1)
         config[$varname]=$(echo $expanded_line | cut -d '=' -f 2-)
     fi
-    if echo $line | grep -F 'module load' &>/dev/null
-    then
+    # if "module load" in the line, load the module
+    if [[ $line == *"module load"* ]]; then
         eval $line
     fi
 done < $1
