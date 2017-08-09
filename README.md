@@ -116,6 +116,7 @@ install.packages(c("data.table", "dynamicTreeCut"))
 ### Download C3D and example data
 
 C3D and its documentation are available in this repo. You can download them via `git clone`.
+Set the permissions for the 3 files that start with `c3d` to executable. i.e. `chmod +x c3d*`.
 
 For this example, we will predict genomic interactions involving the promoters of abelson tyrosine-protein kinase 1 (ABL1) and the breakpoint cluster region protein (BCR) in K562 (chronic myelogenous leukemia) cells by calculating correlations across DNase-seq signals for 79 ENCODE cell lines.
 
