@@ -27,6 +27,9 @@
 # Performs association tests on each candidate & adjusts p-values
 # Produces interaction landscapes and tracks in PDF format
 
+# ==============================================================================
+# Args
+# ==============================================================================
 args <- commandArgs(trailingOnly = TRUE)
 refMapDir <- args[1] # directory of mapped files
 outDir <- sub('/$', '', args[2]) # output directory
@@ -50,6 +53,9 @@ assembly <- args[19] # reference genome
 date <- args[20] # timestamp for output pdf
 workingDir <- args[21] # working directory
 
+# ==============================================================================
+# Environment
+# ==============================================================================
 setwd(workingDir)
 suppressMessages(library("GenomicRanges"))
 suppressMessages(library("Sushi"))
@@ -57,11 +63,14 @@ suppressMessages(library("data.table"))
 suppressMessages(library("preprocessCore"))
 suppressMessages(library("dynamicTreeCut"))
 
+# ==============================================================================
+# Functions
+# ==============================================================================
 # PRE: str
 # POST: GRange
 # converts bed file to a granges object
 bed_to_granges <- function(file) {
-    df <- read.table(file, header=F, stringsAsFactors=F)[,1:3]
+    df <- read.table(file, header = FALSE, stringsAsFactors = FALSE)[, 1:3]
     names(df) <- c('chr','start','end')
     gr <- with(df, GRanges(chr, IRanges(start, end)))
     return(gr)
@@ -71,12 +80,12 @@ bed_to_granges <- function(file) {
 # POST: vector(num)
 # returns correlation and p-value of xth & yth rows of A
 getCor <- function(x, y, A) {
-    if (sd(A[x,]) == 0 || sd(A[y,]) == 0) { # avoid div by 0
+    if (sd(A[x, ]) == 0 || sd(A[y, ]) == 0) { # avoid div by 0
         return(c(0, NA))
     }
     corr <- cor.test(
-        A[x,],
-        A[y,],
+        A[x, ],
+        A[y, ],
         method = corMethod,
         alternative = "two.sided"
     )
@@ -146,6 +155,12 @@ rowAvg <- function(A) {
     }
 }
 
+# ==============================================================================
+# Main
+# ==============================================================================
+
+# signalMatrix
+# ==============================================================================
 # if signalMatrixFile not provided, generate matrix from mapped files
 if (signalMatrixFile == "") {
     # list of files in refMapDir ending in .map.bed
@@ -164,7 +179,7 @@ if (signalMatrixFile == "") {
         start(ranges(ref.bed)),
         "-",
         end(ranges(ref.bed)),
-        sep=""
+        sep = ""
     )
 
     cat("Merging Mapped Files...\n")
@@ -205,6 +220,8 @@ if (! is.numeric(signals)) { # if matrix has NAs
     stop("There are null values in the signal matrix. Check mapped files.\n")
 }
 
+# Calculations
+# ==============================================================================
 signals.norm <- normalize.quantiles(signals) # quantile normalize the signals
 rownames(signals.norm) <- regionNames
 # calculate distances between samples (1-correlation)
@@ -371,7 +388,9 @@ figureWidth <- as.numeric(commaSepStr_to_vector(
 ))
 # extract zoom lengths
 zoom <- as.numeric(commaSepStr_to_vector(zoom, length(anchor.bed)))
-# graphics --------------------------------------------------------------------
+
+# Figures
+# ==============================================================================
 if (figures == "y" && length(regionIndices.Coord1) > 0) {
     # create data frame for anchors
     chr <- as.character(seqnames(anchor.bed))
@@ -648,7 +667,8 @@ if (figures == "y" && length(regionIndices.Coord1) > 0) {
     turnDevOff <- dev.off()
 }
 
-# tracks ----------------------------------------------------------------------
+# Tracks
+# ==============================================================================
 if (tracks == "y") {
     trackPal <- colorRampPalette(c("blue", "purple", "red", "orange"))(numSamples)
     for (r in 1:length(anchor.bed)) {

@@ -47,7 +47,7 @@ config=(
     [figureWidth]="500000"
     [zoom]="0"
     [colours]="#bdd7e7,#6baed6,#3182bd,#08519c"
-    [tracks]=“n”
+    [tracks]="n"
     [sampleName]=" "
     [assembly]="hg19"
 )
