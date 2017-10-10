@@ -1,4 +1,4 @@
-anchor=</path/to/>test_anchors.bed
+testAnchors=</path/to/>test_anchors.bed
 outDirectory=</path/to/output>
 matrix=</path/to/>signalMatrix.txt
 window=500000
