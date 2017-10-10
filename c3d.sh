@@ -35,7 +35,7 @@ typeset -A config
 config=(
     [reference]=""
     [db]=""
-    [anchor]=""
+    [testAnchors]=""
     [outDirectory]=""
     [matrix]=""
     [window]="500000"
@@ -134,11 +134,11 @@ timestamp() {
 }
 
 # if the anchor file does not have 5 fields, create a new formatted one
-anchorCols=$(awk '{print NF}' ${config[anchor]} | sort -nu | tail -n 1)
+anchorCols=$(awk '{print NF}' ${config[testAnchors]} | sort -nu | tail -n 1)
 if [ "$anchorCols" -ne "5" ]; then
-    awk '{print $1"\t"$2"\t"$3"\t.\t"$1"_"$2"-"$3}' ${config[anchor]} > ${config[outDirectory]}/anchors_temp.bed
+    awk '{print $1"\t"$2"\t"$3"\t.\t"$1"_"$2"-"$3}' ${config[testAnchors]} > ${config[outDirectory]}/anchors_temp.bed
 else
-    cat ${config[anchor]} > ${config[outDirectory]}/anchors_temp.bed
+    cat ${config[testAnchors]} > ${config[outDirectory]}/anchors_temp.bed
 fi
 
 # if matrix is missing, map bedgraphs to reference
@@ -159,13 +159,13 @@ else # if matrix is given
 fi
 # filter the anchor file for anchors within the reference catalogue
 intersectBed -wa -a ${config[outDirectory]}/anchors_temp.bed -b ${config[outDirectory]}/ref.bed | sort -u -k1,1 -k2,2n > ${config[outDirectory]}/anchors.bed
-config[anchor]="${config[outDirectory]}/anchors.bed"
+config[testAnchors]="${config[outDirectory]}/anchors.bed"
 rm ${config[outDirectory]}/anchors_temp.bed
 # Run R script
 Rscript $DIR/c3d.R \
     ${config[outDirectory]} \
     ${config[outDirectory]} \
-    ${config[anchor]} \
+    ${config[testAnchors]} \
     ${config[db]} \
     ${config[window]} \
     ${config[correlationThreshold]} \
