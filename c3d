@@ -35,7 +35,7 @@ if [ "$1" = "-help" ]; then
     printf "\nSee template.cfg for an example of a config file"
     printf "\nParameters for config file"
     printf "\nreference (Optional if matrix provided)\n\tReference sample BED/BEDGRAPH"
-    printf "\nanchor (Required)\n\tFile with anchor regions BED (chr,start,stop,gene)"
+    printf "\ntestAnchors (Required)\n\tFile with anchor regions BED (chr,start,stop,gene)"
     printf "\ndb (Optional if matrix provided)\n\tFile containing list of background files BEDGRAPH"
     printf "\noutDirectory (Required)\n\tOutput directory"
     printf "\nmatrix (Optional if reference and db provided)\n\tSignal data with regions as rows & samples as columns. It must have row names in chr:start-end format. If not provided, a matrix will be generated using reference & db"
@@ -66,7 +66,7 @@ declare -A config
 config=(
     [reference]=""
     [db]=""
-    [anchor]=""
+    [testAnchors]=""
     [outDirectory]=""
     [matrix]=""
     [references]=""
@@ -93,9 +93,9 @@ done < $1
 if [ -z "${config[assembly]}" ]; then
     config[assembly]="hg19"
 fi
-# if anchor is missing, warn user and stop script
-if [ -z "${config[anchor]}" ]; then
-    echo "Missing anchor option. Check config file"
+# if testAnchors is missing, warn user and stop script
+if [ -z "${config[testAnchors]}" ]; then
+    echo "Missing testAnchors option. Check config file"
     exit 1
 fi
 # if outDirectory is missing, warn user and stop script
