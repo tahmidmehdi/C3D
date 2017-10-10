@@ -35,7 +35,7 @@ typeset -A config
 config=(
     	[reference]=""
     	[db]=""
-    	[anchor]=""
+    	[testAnchors]=""
 	[outDirectory]=""
 	[matrix]=""
     	[window]="500000"
@@ -47,7 +47,7 @@ config=(
 	[figureWidth]="500000"
 	[zoom]="0"
 	[colours]="#bdd7e7,#6baed6,#3182bd,#08519c"
-	[tracks]=“n”
+	[tracks]="n"
 	[sampleName]=" "
 	[assembly]="hg19"
 )
@@ -92,7 +92,7 @@ if [ -z "${config[colours]}" ]; then
         config[colours]="#bdd7e7,#6baed6,#3182bd,#08519c"
 fi
 if [ -z "${config[tracks]}" ]; then
-        config[tracks]="y"
+        config[tracks]="n"
 fi
 if [ -z "${config[sampleName]}" ]; then
         config[sampleName]=" "
@@ -134,11 +134,11 @@ date +"%Y-%m-%d_%H-%M-%S"
 }
 
 # if the anchor file does not have 5 fields, create a new formatted one
-anchorCols=$(awk '{print NF}' ${config[anchor]} | sort -nu | tail -n 1)
+anchorCols=$(awk '{print NF}' ${config[testAnchors]} | sort -nu | tail -n 1)
 if [ "$anchorCols" -ne "5" ]; then
-        awk '{print $1"\t"$2"\t"$3"\t.\t"$1"_"$2"-"$3}' ${config[anchor]} > ${config[outDirectory]}/anchors_temp.bed
+        awk '{print $1"\t"$2"\t"$3"\t.\t"$1"_"$2"-"$3}' ${config[testAnchors]} > ${config[outDirectory]}/anchors_temp.bed
 else
-	cat ${config[anchor]} > ${config[outDirectory]}/anchors_temp.bed
+	cat ${config[testAnchors]} > ${config[outDirectory]}/anchors_temp.bed
 fi
 
 # if matrix is missing, map bedgraphs to reference
@@ -159,7 +159,7 @@ else # if matrix is given
 fi
 # filter the anchor file for anchors within the reference catalogue
 intersectBed -wa -a ${config[outDirectory]}/anchors_temp.bed -b ${config[outDirectory]}/ref.bed | sort -u -k1,1 -k2,2n > ${config[outDirectory]}/anchors.bed
-config[anchor]="${config[outDirectory]}/anchors.bed"
+config[testAnchors]="${config[outDirectory]}/anchors.bed"
 rm ${config[outDirectory]}/anchors_temp.bed 
 # Run R script
-Rscript $DIR/c3d.R "${config[outDirectory]}" "${config[outDirectory]}" "${config[anchor]}" "${config[db]}" "${config[window]}" "${config[correlationThreshold]}" "${config[pValueThreshold]}" "${config[qValueThreshold]}" "${config[correlationMethod]}" "${config[matrix]}" "${config[figures]}" "${config[figureWidth]}" "${config[zoom]}" "${config[colours]}" "${config[tracks]}" "${config[sampleName]}" "$trackNumber" "$numSamples" "${config[assembly]}" "$(timestamp)" "$DIR"
+Rscript $DIR/c3d.R "${config[outDirectory]}" "${config[outDirectory]}" "${config[testAnchors]}" "${config[db]}" "${config[window]}" "${config[correlationThreshold]}" "${config[pValueThreshold]}" "${config[qValueThreshold]}" "${config[correlationMethod]}" "${config[matrix]}" "${config[figures]}" "${config[figureWidth]}" "${config[zoom]}" "${config[colours]}" "${config[tracks]}" "${config[sampleName]}" "$trackNumber" "$numSamples" "${config[assembly]}" "$(timestamp)" "$DIR"
