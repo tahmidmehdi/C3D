@@ -681,7 +681,7 @@ if (tracks == "y") {
             )
             next
         }
-        file <- paste(outDir, "/", ids[r], ".anchor", sep = "")
+        file <- paste(outDir, "/", ids[r], ".anchor.bedGraph", sep = "")
         # create & print the browser header to a file
         browserHeader <- paste(
             "browser position ",
