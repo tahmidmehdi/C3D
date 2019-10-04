@@ -26,29 +26,74 @@
 # Regions with high correlations are candidates for 3D interactions
 # Performs association tests on each candidate & adjusts p-values
 # Produces interaction landscapes and tracks in PDF format
+library(optparse)
 
-args <- commandArgs(trailingOnly = TRUE)
-refMapDir <- args[1] # directory of mapped files
-outDir <- sub('/$', '', args[2]) # output directory
-anchor <- args[3] # anchor file (bed)
-bg <- args[4] # file with list of bg files 
-window <- args[5] # flanking bps from anchor to search for open regions
-rcut <- as.numeric(args[6]) # correlation threshold
-pcut <- as.numeric(args[7]) # p-value threshold
-qcut <- as.numeric(args[8]) # q-value threshold
-corMethod <- tolower(args[9]) # correlation coefficient (pearson, spearman, kendall)
-signalMatrixFile <- args[10] # signal data (if available)
-figures <- tolower(args[11]) # 'y' if you want interaction landscapes outputted
-figureWidth <- args[12] # flanking bps from anchor to display on figure
-zoom <- args[13] # how many flanking bps for zoomed landscapes
-colour <- args[14] # colours for the interaction plots
-tracks <- args[15] # 'y' if you want tracks outputted
-sampleName <- args[16]
-trackNumber <- as.numeric(args[17])
-numSamples <- as.numeric(args[18])
-assembly <- args[19] # reference genome
-date <- args[20] # timestamp for output pdf
-workingDir <- args[21] # working directory
+option_list <- list(make_option(c("-d", "--refmapdir"), type="character", default=NULL,
+                                help="Directory of mapped files"),
+                    make_option(c("-o", "--outdir"), type="character", default=NULL,
+                                help="Output directory"),
+                    make_option(c("-a", "--anchor"), type="character", default=NULL,
+                                help="Anchor file (bed)"),
+                    make_option(c("-b", "--bg"), type="character", default=NULL,
+                                help="File with list of bg files"),
+                    make_option(c("-w", "--window"), type="integer", default=NULL,
+                                help="Flanking bps from anchor to search for open regions"),
+                    make_option(c("-r", "--rcut"), type="character", default=NULL,
+                                help="Correlation threshold"),
+                    make_option(c("-p", "--pcut"), type="character", default=NULL,
+                                help="p-value threshold"),
+                    make_option(c("-q", "--qcut"), type="character", default=NULL,
+                                help="q-value threshold"),
+                    make_option(c("-m", "--cormethod"), type="character", default='pearson',
+                                help="Correlation coefficient (pearson, spearman, kendall) [default= %default]"),
+                    make_option(c("-s", "--signalmat"), type="character", default=NULL,
+                                help="Signal data (if available)"),
+                    make_option(c("-g", "--figures"), type="character", default=NULL,
+                                help="'y' if you want interaction landscapes outputted"),
+                    make_option(c("-y", "--figwidth"), type="integer", default=NULL,
+                                help="flanking bps from anchor to display on figure"),
+                    make_option(c("-z", "--zoom"), type="integer", default=NULL,
+                                help="How many flanking bps for zoomed landscapes"),
+                    make_option(c("-c", "--colour"), type="character", default=NULL,
+                                help="Colours for the interaction plots"),
+                    make_option(c("-t", "--tracks"), type="character", default=NULL,
+                                help="'y' if you want tracks outputted"),
+                    make_option(c("-i", "--sample"), type="integer", default=NULL,
+                                help="sample name"),
+                    make_option(c("-u", "--tracknum"), type="integer", default=NULL,
+                                help="track number"),
+                    make_option(c("-n", "--numsample"), type="integer", default=NULL,
+                                help="number of samples"),
+                    make_option(c("-j", "--assembly"), type="character", default=NULL,
+                                help="reference genome"),
+                    make_option(c("-x", "--date"), type="character", default=NULL,
+                                help="timestamp for output pdf"),
+                    make_option(c("-k", "--wdir"), type="character", default=NULL,
+                                help="working directory"))
+opt_parser <- OptionParser(option_list=option_list)
+opt <- parse_args(opt_parser)
+
+refMapDir <- opt$refmapdir
+outDir <- opt$outdir
+anchor <- opt$anchor
+bg <- opt$bg
+window <- opt$window
+rcut <- opt$rcut
+pcut <- opt$pcut
+qcut <- opt$qcut
+corMethod <- opt$cormethod
+signalMatrixFile <- opt$signalmat
+figures <- opt$figures
+figureWidth <- opt$figwidth
+zoom <- opt$zoom
+colour <- opt$colour
+tracks <- opt$tracks
+sampleName <- opt$sample
+trackNumber <- opt$tracknum
+numSamples <- opt$numsample
+assembly <- opt$assembly
+date <- opt$date
+workingDir <- opt$wdir
 
 setwd(workingDir)
 suppressMessages(library("GenomicRanges"))

@@ -162,4 +162,25 @@ intersectBed -wa -a ${config[outDirectory]}/anchors_temp.bed -b ${config[outDire
 config[testAnchors]="${config[outDirectory]}/anchors.bed"
 rm ${config[outDirectory]}/anchors_temp.bed 
 # Run R script
-Rscript $DIR/c3d.R "${config[outDirectory]}" "${config[outDirectory]}" "${config[testAnchors]}" "${config[db]}" "${config[window]}" "${config[correlationThreshold]}" "${config[pValueThreshold]}" "${config[qValueThreshold]}" "${config[correlationMethod]}" "${config[matrix]}" "${config[figures]}" "${config[figureWidth]}" "${config[zoom]}" "${config[colours]}" "${config[tracks]}" "${config[sampleName]}" "$trackNumber" "$numSamples" "${config[assembly]}" "$(timestamp)" "$DIR"
+Rscript $DIR/c3d.R \
+--refmapdir "${config[outDirectory]}" \
+--outdir "${config[outDirectory]}" \
+--anchor "${config[testAnchors]}" \
+--bg "${config[db]}" \
+--window "${config[window]}" \
+--rcut "${config[correlationThreshold]}" \
+--pcut "${config[pValueThreshold]}" \
+--qcut "${config[qValueThreshold]}" \
+--cormethod "${config[correlationMethod]}" \
+--signalmat "${config[matrix]}" \
+--figures "${config[figures]}" \
+--figwidth "${config[figureWidth]}" \
+--zoom "${config[zoom]}" \
+--colour "${config[colours]}" \
+--tracks "${config[tracks]}" \
+--sample "${config[sampleName]}" \
+--tracknum "$trackNumber" \
+--numsample "$numSamples" \
+--assembly "${config[assembly]}" \
+--date "$(timestamp)" \
+--wdir "$DIR"
