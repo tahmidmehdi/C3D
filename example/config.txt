@@ -1,6 +1,6 @@
-testAnchors=/mnt/work1/users/pughlab/bin/git/C3D/example/test_anchors.bed
-outDirectory=/mnt/work1/users/pughlab/bin/git/C3D/example/out
-matrix=/mnt/work1/users/pughlab/bin/git/C3D/example/signalMatrix.txt
+testAnchors=/path/to/test_anchors.bed
+outDirectory=/path/to/out
+matrix=/path/to/signalMatrix.txt
 window=500000
 correlationThreshold=0.7
 correlationMethod=pearson
