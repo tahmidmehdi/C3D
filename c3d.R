@@ -136,6 +136,7 @@ get_max_cor = function(int, chr, start, end) {
 # POST: vect
 # Breaks a string into a vector of strings separated at commas
 commaSepStr_to_vector = function(commaSepStr, desiredLength) {
+  commaSepStr <- as.character(commaSepStr)
   vect <- unlist(strsplit(commaSepStr, split=","))
   # if the string didn't have desiredLength items,
   # then just make a vector with the first element repeated desiredLength times
@@ -303,8 +304,11 @@ if (length(regionIndices.Coord1)<=0 && figures=="y") {
   cat("No interaction candidates passed the filters; No figures generated\n")
 }
 # get widths for figures & tracks
+print("1st usage")
+print(paste(figureWidth, length(anchor.bed)))
 figureWidth <- as.numeric(commaSepStr_to_vector(figureWidth, length(anchor.bed)))
 # extract zoom lengths
+print("2nd usage...")
 zoom <- as.numeric(commaSepStr_to_vector(zoom, length(anchor.bed)))
 # graphics --------------------------------------------------------------------
 if (figures=="y" && length(regionIndices.Coord1)>0) {
@@ -320,6 +324,7 @@ if (figures=="y" && length(regionIndices.Coord1)>0) {
   anchor.df <- data.frame(chr,start,end, strand, score, p_Value, q_Value, name, row=1, color="purple")
   
   # extract colours for interactions
+  print("3rd usage...")
   colour <- commaSepStr_to_vector(colour, 4)
   # make interaction data frame 
   chrom1 <- as.character(seqnames(ref.bed[regionIndices.Coord1]))
