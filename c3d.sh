@@ -48,7 +48,7 @@ config=(
 	[zoom]="0"
 	[colours]="#bdd7e7,#6baed6,#3182bd,#08519c"
 	[tracks]="n"
-	[sampleName]=" "
+	[sampleName]=""
 	[assembly]="hg19"
 )
 # read parameters from config file
@@ -95,7 +95,7 @@ if [ -z "${config[tracks]}" ]; then
         config[tracks]="n"
 fi
 if [ -z "${config[sampleName]}" ]; then
-        config[sampleName]=" "
+        config[sampleName]=""
 fi
 if [ -z "${config[assembly]}" ]; then
         config[assembly]="hg19"
@@ -163,24 +163,24 @@ config[testAnchors]="${config[outDirectory]}/anchors.bed"
 rm ${config[outDirectory]}/anchors_temp.bed 
 # Run R script
 Rscript $DIR/c3d.R \
---refmapdir "${config[outDirectory]}" \
---outdir "${config[outDirectory]}" \
---anchor "${config[testAnchors]}" \
---bg "${config[db]}" \
---window "${config[window]}" \
---rcut "${config[correlationThreshold]}" \
---pcut "${config[pValueThreshold]}" \
---qcut "${config[qValueThreshold]}" \
---cormethod "${config[correlationMethod]}" \
---signalmat "${config[matrix]}" \
---figures "${config[figures]}" \
---figwidth "${config[figureWidth]}" \
---zoom "${config[zoom]}" \
---colour "${config[colours]}" \
---tracks "${config[tracks]}" \
---sample "${config[sampleName]}" \
---tracknum "$trackNumber" \
---numsample "$numSamples" \
---assembly "${config[assembly]}" \
+--refmapdir "${config[outDirectory]:-NULL}" \
+--outdir "${config[outDirectory]:-NULL}" \
+--anchor "${config[testAnchors]:-NULL}" \
+--bg "${config[db]:-NULL}" \
+--window "${config[window]:-NULL}" \
+--rcut "${config[correlationThreshold]:-NULL}" \
+--pcut "${config[pValueThreshold]:-NULL}" \
+--qcut "${config[qValueThreshold]:-NULL}" \
+--cormethod "${config[correlationMethod]:-NULL}" \
+--signalmat "${config[matrix]:-NULL}" \
+--figures "${config[figures]:-NULL}" \
+--figwidth "${config[figureWidth]:-NULL}" \
+--zoom "${config[zoom]:-NULL}" \
+--colour "${config[colours]:-NULL}" \
+--tracks "${config[tracks]:-NULL}" \
+--sample "${config[sampleName]:-NULL}" \
+--tracknum "${trackNumber:-NULL}" \
+--numsample "${numSamples:-NULL}" \
+--assembly "${config[assembly]:-NULL}" \
 --date "$(timestamp)" \
---wdir "$DIR"
+--wdir "${DIR:-NULL}"
