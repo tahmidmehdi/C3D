@@ -1,6 +1,0 @@
-browser position chr3:127712016-128713016
-browser hide all
-browser pack refGene
-browser full altGraph
-track type=bedGraph name="Anchor" description="GATA2" visibility=full color=0,0,0 altColor=0,0,0 viewLimits=0:1 autoScale=off gridDefault=on db=hg19
-chr3	128212016	128213016	1
