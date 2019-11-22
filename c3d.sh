@@ -48,7 +48,7 @@ config=(
 	[zoom]="0"
 	[colours]="#bdd7e7,#6baed6,#3182bd,#08519c"
 	[tracks]="n"
-	[sampleName]=" "
+	[sampleName]=""
 	[assembly]="hg19"
 )
 # read parameters from config file
@@ -95,7 +95,7 @@ if [ -z "${config[tracks]}" ]; then
         config[tracks]="n"
 fi
 if [ -z "${config[sampleName]}" ]; then
-        config[sampleName]=" "
+        config[sampleName]=""
 fi
 if [ -z "${config[assembly]}" ]; then
         config[assembly]="hg19"
@@ -162,4 +162,25 @@ intersectBed -wa -a ${config[outDirectory]}/anchors_temp.bed -b ${config[outDire
 config[testAnchors]="${config[outDirectory]}/anchors.bed"
 rm ${config[outDirectory]}/anchors_temp.bed 
 # Run R script
-Rscript $DIR/c3d.R "${config[outDirectory]}" "${config[outDirectory]}" "${config[testAnchors]}" "${config[db]}" "${config[window]}" "${config[correlationThreshold]}" "${config[pValueThreshold]}" "${config[qValueThreshold]}" "${config[correlationMethod]}" "${config[matrix]}" "${config[figures]}" "${config[figureWidth]}" "${config[zoom]}" "${config[colours]}" "${config[tracks]}" "${config[sampleName]}" "$trackNumber" "$numSamples" "${config[assembly]}" "$(timestamp)" "$DIR"
+Rscript $DIR/c3d.R \
+--refmapdir "${config[outDirectory]:-NULL}" \
+--outdir "${config[outDirectory]:-NULL}" \
+--anchor "${config[testAnchors]:-NULL}" \
+--bg "${config[db]:-NULL}" \
+--window "${config[window]:-NULL}" \
+--rcut "${config[correlationThreshold]:-NULL}" \
+--pcut "${config[pValueThreshold]:-NULL}" \
+--qcut "${config[qValueThreshold]:-NULL}" \
+--cormethod "${config[correlationMethod]:-NULL}" \
+--signalmat "${config[matrix]:-NULL}" \
+--figures "${config[figures]:-NULL}" \
+--figwidth "${config[figureWidth]:-NULL}" \
+--zoom "${config[zoom]:-NULL}" \
+--colour "${config[colours]:-NULL}" \
+--tracks "${config[tracks]:-NULL}" \
+--sample "${config[sampleName]:-NULL}" \
+--tracknum "${trackNumber:-NULL}" \
+--numsample "${numSamples:-NULL}" \
+--assembly "${config[assembly]:-NULL}" \
+--date "$(timestamp)" \
+--wdir "${DIR:-NULL}"
