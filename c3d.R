@@ -179,7 +179,7 @@ rowAvg = function(A) {
 }
 
 # if signalMatrixFile not provided, generate matrix from mapped files
-if (signalMatrixFile=="") {
+if (!is.character(signalMatrixFile)) {
   # list of files in refMapDir ending in .map.bed
   refMapDir <-  sub('/$', '', refMapDir)
   refMapFiles <- list.files(refMapDir, pattern="*.map.bed", full.names=TRUE)
